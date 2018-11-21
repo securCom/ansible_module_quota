@@ -8,89 +8,142 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = '''
 --- 
-author: 
-  - "Peter Hudec (@hudecof)"
-description: 
-  - "Module manages filesystem quotas"
 module: quota
-notes: 
-  - "for getting quota is C(quota) tool used"
-  - "for setting quota is  C(setquota) tool used"
-options: 
-  blocks_hard: 
-    description: 
-      - "number of 1k blocks to set hard quota (integer of floating)"
-      - "could contain opional +/- at the begining"
-      - "could be followed by modifiers: Kb, Mb, Gb, Tb, K, M, G, T"
-      - "block size is 1024, 1Kb = 1, 1M = 1024k = 1024"
-    required: false
-  blocks_soft: 
-    description: 
-      - "number of 1k blocks to set soft quota (integer of floating)"
-      - "could contain opional +/- at the begining"
-      - "could be followed by modifiers: Kb, Mb, Gb, Tb, K, M, G, T"
-      - "block size is 1024, 1Kb = 1, 1M = 1024k = 1024"
-    required: false
-  filesystem: 
-    description: 
-      - "filesystem path to get/set quota"
-    required: true
-  inodes_hard: 
-    description: 
-      - "number of inodes  to set hard quota (integer of floating)"
-      - "could contain opional +/- at the begining"
-      - "could be followed by modifiers: Kb, Mb, Gb, Tb, K, M, G, T"
-    required: false
-  inodes_soft: 
-    description: 
-      - "number of inodes  to set hard quota (integer of floating)"
-      - "could contain opional +/- at the begining"
-      - "could be followed by modifiers: Kb, Mb, Gb, Tb, K, M, G, T"
-    required: false
-  name: 
-    description: 
-      - "name of the group or user to get/set quota"
-    required: true
-  type: 
-    choices: 
-      - user
-      - group
-    description: 
-      - "define type of quota to set"
-      - "default value is C(user)"
-    required: false
-short_description: "Managing system quotas"
+
+short_description: Managing system quotas
+
 version_added: "2.5"
 
+description: 
+  - manage or report filesystem quotas using system utilities
+  - at one time there could be managed only quota for one user/group on given filesystem
+  - to manage the quota on more fileststems, the task needs to be run multiple times
+
+author: 
+  - Peter Hudec (peter.hudec@securcom.me, @hudecof)
+
+notes: 
+  - at one time there could be managed only quota for one user/group on given filesystem. 
+    To manage the quota on more fileststems the task need to be runned multiple times.
+  - for getting quota is C(quota) tool used
+  - for setting quota is  C(setquota) tool used
+  - the C(quotatool) binary have in version C(1.4.12) bug. This which makes it unusable 
+    C(https://github.com/ekenberg/quotatool/issues/7). It is used for example in C(Debian 9)
+
+options: 
+  type: 
+    choices: [user, group]
+    default: user
+    required: false
+    description: 
+      - if C(user) is set, user quota is managed
+      - if C(group) is set, group quota is managed
+
+  name: 
+    type: str
+    description: 
+      - name of the C(user) or C(group) to manage quota
+    required: true
+
+  filesystem:
+    type: str
+    description: 
+      - filesystem path to manage quota, it must be device patch (aka C(/dev/sdb1))
+    required: true
+
+  blocks_hard: 
+    type: str 
+    description: 
+      - number of C(1k) blocks to set hard quota (integer of floating)
+      - could contain opional C(+/-) at the begining
+      - could be followed by modifiers: C(Kb), C(Mb, C(Gb, C(Tb), C(K), C(M), C(G), C(T)
+      - block size is C(1024), C(1Kb = 1, 1M = 1024k = 1024)
+      - multiplier is C(1024)
+    required: false
+
+  blocks_soft:
+    type: str 
+    description: 
+      - number of C(1k) blocks to set soft quota (integer of floating)
+      - could contain opional C(+/-) at the begining
+      - could be followed by modifiers: C(Kb), C(Mb, C(Gb, C(Tb), C(K), C(M), C(G), C(T)
+      - block size is C(1024), C(1Kb = 1, 1M = 1024k = 1024)
+      - multiplier is C(1024)
+    required: false
+
+  inodes_hard: 
+    description: 
+      - number of inodes  to set hard quota (integer of floating)
+      - could contain opional C(+/-) at the begining
+      - could be followed by modifiers: C(Kb), C(Mb, C(Gb, C(Tb), C(K), C(M), C(G), C(T)
+      - multiplier is C(1000)
+    required: false
+
+  inodes_soft: 
+    description: 
+      - number of inodes  to set hard quota (integer of floating)
+      - could contain opional C(+/-) at the begining
+      - could be followed by modifiers: C(Kb), C(Mb, C(Gb, C(Tb), C(K), C(M), C(G), C(T)
+      - multiplier is C(1000)
+    required: false
 '''
 
 EXAMPLES = '''
-# get qo
+# get quota usage
 - name: Test with a message
   quota:
     name: user
     type: user
     filesystem: /dev/sdb1
 
-
-# pass in a message and have changed true
-- name: Test with a message and changed output
-  my_new_test_module:
-    name: hello world
-    new: true
-
-# fail the module
-- name: Test failure of the module
-  my_new_test_module:
-    name: fail me
+# set quota usage
+- name: Test with a message
+  quota:
+    name: user
+    type: user
+    filesystem: /dev/sdb1
+    blocks_hard: 10Mb
 '''
 
 RETURN = '''
-original_message:
-    description: The original name param that was passed in
-    type: str
 message:
-    description: The output message that the sample module generates
+  description: human readable sttaus of the task
+  type: str
+  sample: 'quota updated'
+blocks_hard:
+  description: current value for blocks hard limit
+  type: int
+blocks_soft:
+  description: current value for blocks soft limit
+  type: int
+blocks_grace:
+  description: current value for blocks grace period
+  type: srt
+  sample: '6days'
+  returned: when quota report is used
+blocks_current:
+  description: current usage of blocks
+  type: int
+blocks_changed:
+  description: whether or not the blocks limits were changed
+  type: bool  
+inodes_hard:
+  description: current value for inodes hard limit
+  type: int
+inodes_soft:
+  description: current value for inodes soft limit
+  type: int
+inodes_grace:
+  description: current value for inodes grace period
+  type: srt
+  sample: '6days'
+  returned: when quota report is used
+inodes_current:
+  description: current usage of inodes
+  type: int
+inodes_changed:
+  description: whether or not the inodes limits were changed
+  type: bool 
 '''
 
 import re
