@@ -166,13 +166,13 @@ def get_quota_quota(module):
         dictionary: containing the current quota setting and usage
 
             {
-                'blocks_soft': <int>,
-                'blocks_hard': <int>,
-                'blocks_current': <int>,
+                'blocks_soft': <str>,
+                'blocks_hard': <str>,
+                'blocks_current': <str>,
                 'blocks_grace': <str>,
-                'inodes_soft': <int>,
-                'inodes_hard': <int>,
-                'inodes_current': <int>,
+                'inodes_soft': <str>,
+                'inodes_hard': <str>,
+                'inodes_current': <str>,
                 'inodes_grace': <str>,
             }
 
@@ -286,13 +286,13 @@ def get_quota_quotatool(module):
         dictionary: containing the current quota setting and usage
 
             {
-                'blocks_soft': <int>,
-                'blocks_hard': <int>,
-                'blocks_current': <int>,
+                'blocks_soft': <str>,
+                'blocks_hard': <str>,
+                'blocks_current': <str>,
                 'blocks_grace': <str>,
-                'inodes_soft': <int>,
-                'inodes_hard': <int>,
-                'inodes_current': <int>,
+                'inodes_soft': <str>,
+                'inodes_hard': <str>,
+                'inodes_current': <str>,
                 'inodes_grace': <str>,
             }
 
@@ -349,7 +349,23 @@ def get_quota_quotatool(module):
     return result
 
 def set_quota_quotatool(module, quota):
+    """ set quota for user and given filesystem
 
+    **quotatool** is used for setting the data. 
+
+    Args:
+        module: AnsibleModule object
+        quota: disctionary
+            {
+                'blocks_soft': <str>,
+                'blocks_hard': <str>,
+                'blocks_changed': <bool>,
+                'inodes_soft': <str>,
+                'inodes_hard': <str>,
+                'inodes_changed': <bool>,
+
+            }
+    """
     def run(module, quota_type, hard=None, soft=None):
         cmd = [module.get_bin_path('quotatool', True)]
         if module.params['type'] == 'user':
