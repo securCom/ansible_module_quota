@@ -1,38 +1,105 @@
-Role Name
+# Module: quota
 =========
 
-A brief description of the role goes here.
+Manages filesystem quotas using **quota** and **setquota** tools
 
-Requirements
-------------
+# Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+quota utilities need to be installed on the target system
 
-Role Variables
---------------
+# Notes
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Tested only on **CentOS 7** and ** Debian 9**. 
 
-Dependencies
-------------
+Use at your own risk.
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
 
-Example Playbook
-----------------
+## RedHat based distros
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+    yum install -y quota
+    
+## Debian based distros
+
+    apt install quota
+    
+# Variables
+
+Detailed description is in the modules file, just brief
+
+* `blocks_hard` 
+  * number of 1k blocks to set hard quota (integer of floating)
+  * could contain opional +/- at the begining
+  * could be followed by modifiers: Kb, Mb, Gb, Tb, K, M, G, T
+  * block size is 1024, 1Kb = 1, 1M = 1024k = 1024
+  *  required: false
+ 
+* `blocks_soft`
+  * number of 1k blocks to set soft quota (integer of floating)
+  * could contain opional +/- at the begining
+  * could be followed by modifiers: Kb, Mb, Gb, Tb, K, M, G, T
+  * block size is 1024, 1Kb = 1, 1M = 1024k = 1024
+  * required: false
+
+ 
+* `filesystem`
+  * filesystem path to get/set quota
+   * required: true
+  
+* `inodes_hard`
+  * number of inodes  to set hard quota (integer of floating)
+  * could contain opional +/- at the begining
+  * could be followed by modifiers: Kb, Mb, Gb, Tb, K, M, G, T
+  * required: false
+
+ * `inodes_soft` 
+   * number of inodes  to set hard quota (integer of floating)
+   * could contain opional +/- at the begining
+   * could be followed by modifiers: Kb, Mb, Gb, Tb, K, M, G, T
+   * required: false
+  
+* `name`
+  * name of the group or user to get/set quota"
+  * required: true
+  * values: [user, group]
+
+  
+# Example Playbook
+
+## get actual quota
+
+To get actual quota omit all **hard**/**soft** parameters.
 
     - hosts: servers
       roles:
-         - { role: username.rolename, x: 42 }
+         - { role: hudecof.module_quota }
+      tasks:
+        - name: get quota
+          quota:
+            name: user
+            type: user
+            filesystem: /dev/sdb1
+          register: quota
 
-License
--------
+## set quota
+
+    - hosts: servers
+      roles:
+         - { role: hudecof.module_quota }
+      tasks:
+        - name: get quota
+          quota:
+            name: user
+            type: user
+            filesystem: /dev/sdb1
+            blocks_hard: 2K
+
+
+# License
 
 BSD
 
-Author Information
-------------------
+# Author Information
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+- name: Peter Hudec
+- sponsor: ![securCom](https://www.securcom.me/wp-content/themes/securcom/images/logo.png)
+
