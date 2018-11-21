@@ -1,5 +1,4 @@
 # Module: quota
-=========
 
 Manages filesystem quotas using **quota** and **setquota** tools
 
