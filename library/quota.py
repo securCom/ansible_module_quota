@@ -1,4 +1,8 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# Copyright: (c) 2018 Peter Hudec <peter.hudec@securcom.me>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 ANSIBLE_METADATA = {
     'metadata_version': '1.1',
@@ -6,98 +10,84 @@ ANSIBLE_METADATA = {
     'supported_by': 'community'
 }
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 --- 
 module: quota
-
 short_description: Managing system quotas
-
-version_added: "2.5"
-
-description: 
+version_added: '2.5'
+description:
   - manage or report filesystem quotas using system utilities
   - at one time there could be managed only quota for one user/group on given filesystem
   - to manage the quota on more fileststems, the task needs to be run multiple times
-
-author: 
-  - Peter Hudec (peter.hudec@securcom.me, @hudecof)
-
-notes: 
-  - at one time there could be managed only quota for one user/group on given filesystem. 
-    To manage the quota on more fileststems the task need to be runned multiple times.
-  - for getting quota is C(quota) tool used
-  - for setting quota is  C(setquota) tool used
-  - the C(quotatool) binary have in version C(1.4.12) bug. This which makes it unusable 
-    C(https://github.com/ekenberg/quotatool/issues/7). It is used for example in C(Debian 9)
-
-options: 
-  type: 
+author:
+  - Peter Hudec (@hudecof)
+options:
+  type:
     choices: [user, group]
     default: user
     required: false
-    description: 
+    description:
       - if C(user) is set, user quota is managed
       - if C(group) is set, group quota is managed
-
-  name: 
+  name:
     type: str
-    description: 
+    description:
       - name of the C(user) or C(group) to manage quota
     required: true
-
   filesystem:
     type: str
-    description: 
+    description:
       - filesystem path to manage quota, it must be device patch (aka C(/dev/sdb1))
     required: true
-
-  blocks_hard: 
-    type: str 
-    description: 
+  blocks_hard:
+    type: str
+    description:
       - number of C(1k) blocks to set hard quota (integer of floating)
       - could contain opional C(+/-) at the begining
       - could be followed by modifiers: C(Kb), C(Mb, C(Gb, C(Tb), C(K), C(M), C(G), C(T)
       - block size is C(1024), C(1Kb = 1, 1M = 1024k = 1024)
       - multiplier is C(1024)
     required: false
-
   blocks_soft:
-    type: str 
-    description: 
+    type: str
+    description:
       - number of C(1k) blocks to set soft quota (integer of floating)
       - could contain opional C(+/-) at the begining
       - could be followed by modifiers: C(Kb), C(Mb, C(Gb, C(Tb), C(K), C(M), C(G), C(T)
       - block size is C(1024), C(1Kb = 1, 1M = 1024k = 1024)
       - multiplier is C(1024)
     required: false
-
-  inodes_hard: 
-    description: 
+  inodes_hard:
+    description:
       - number of inodes  to set hard quota (integer of floating)
       - could contain opional C(+/-) at the begining
       - could be followed by modifiers: C(Kb), C(Mb, C(Gb, C(Tb), C(K), C(M), C(G), C(T)
       - multiplier is C(1000)
     required: false
-
-  inodes_soft: 
-    description: 
+  inodes_soft:
+    description:
       - number of inodes  to set hard quota (integer of floating)
       - could contain opional C(+/-) at the begining
       - could be followed by modifiers: C(Kb), C(Mb, C(Gb, C(Tb), C(K), C(M), C(G), C(T)
       - multiplier is C(1000)
     required: false
+notes:
+  - at one time there could be managed only quota for one user/group on given filesystem.
+    To manage the quota on more fileststems the task need to be runned multiple times.
+  - for getting quota is C(quota) tool used
+  - for setting quota is  C(setquota) tool used
+  - the C(quotatool) binary have in version C(1.4.12) bug. This which makes it unusable
+    C(https://github.com/ekenberg/quotatool/issues/7). It is used for example in C(Debian 9)
 '''
 
-EXAMPLES = '''
-# get quota usage
-- name: Test with a message
+EXAMPLES = r'''
+- name: Get quota
   quota:
     name: user
     type: user
     filesystem: /dev/sdb1
 
-# set quota usage
-- name: Test with a message
+- name: Set quota
   quota:
     name: user
     type: user
@@ -105,7 +95,7 @@ EXAMPLES = '''
     blocks_hard: 10Mb
 '''
 
-RETURN = '''
+RETURN = r'''
 message:
   description: human readable sttaus of the task
   type: str
@@ -118,7 +108,7 @@ blocks_soft:
   type: int
 blocks_grace:
   description: current value for blocks grace period
-  type: srt
+  type: str
   sample: '6days'
   returned: when quota report is used
 blocks_current:
@@ -126,7 +116,7 @@ blocks_current:
   type: int
 blocks_changed:
   description: whether or not the blocks limits were changed
-  type: bool  
+  type: bool
 inodes_hard:
   description: current value for inodes hard limit
   type: int
@@ -135,7 +125,7 @@ inodes_soft:
   type: int
 inodes_grace:
   description: current value for inodes grace period
-  type: srt
+  type: str
   sample: '6days'
   returned: when quota report is used
 inodes_current:
@@ -220,7 +210,7 @@ def get_quota_quota(module):
     cmd = [str(x) for x in cmd]
     rc, out, err = module.run_command(cmd)
 
-    # quota command retuend non zero value on quota exceeded
+    # quota command returned non zero value on quota exceeded
 #    if rc != 0:
 #        module.fail_json(msg="geting quota failed", rc=rc, err=err)
 
