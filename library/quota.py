@@ -14,25 +14,26 @@ DOCUMENTATION = r'''
 --- 
 module: quota
 short_description: Managing system quotas
-version_added: '2.5'
+version_added: '2.7.1'
 description:
-  - manage or report filesystem quotas using system utilities
-  - at one time there could be managed only quota for one user/group on given filesystem
-  - to manage the quota on more fileststems, the task needs to be run multiple times
+  - Manage or report filesystem quotas using system utilities.
+  - At one time there could be managed only quota for one user/group on given filesystem.
+  - To manage the quota on more filesystem, the task needs to be run multiple times.
 author:
   - Peter Hudec (@hudecof)
 options:
   type:
-    choices: [user, group]
+    type: str
+    choices: [ user, group ]
     default: user
     required: false
     description:
-      - if C(user) is set, user quota is managed
-      - if C(group) is set, group quota is managed
+      - if C(type=user) is set, user quota is managed
+      - if C(type=group) is set, group quota is managed
   name:
     type: str
     description:
-      - name of the C(user) or C(group) to manage quota
+      - name of the givend I(type) to manage quota
     required: true
   filesystem:
     type: str
@@ -44,40 +45,41 @@ options:
     description:
       - number of C(1k) blocks to set hard quota (integer of floating)
       - could contain opional C(+/-) at the begining
-      - could be followed by modifiers: C(Kb), C(Mb, C(Gb, C(Tb), C(K), C(M), C(G), C(T)
-      - block size is C(1024), C(1Kb = 1, 1M = 1024k = 1024)
-      - multiplier is C(1024)
+      - could be followed by modifiers C(Kb), C(Mb), C(Gb), C(Tb), C(K), C(M), C(G), C(T)
+      - block size is 1024, 1Kb = 1, 1M = 1024k = 1024
+      - multiplier is 1024
     required: false
   blocks_soft:
     type: str
     description:
       - number of C(1k) blocks to set soft quota (integer of floating)
       - could contain opional C(+/-) at the begining
-      - could be followed by modifiers: C(Kb), C(Mb, C(Gb, C(Tb), C(K), C(M), C(G), C(T)
-      - block size is C(1024), C(1Kb = 1, 1M = 1024k = 1024)
-      - multiplier is C(1024)
+      - could be followed by modifiers C(Kb), C(Mb), C(Gb), C(Tb), C(K), C(M), C(G), C(T)
+      - block size is 1024, 1Kb = 1, 1M = 1024k = 1024
+      - multiplier is 1024
     required: false
   inodes_hard:
     description:
       - number of inodes  to set hard quota (integer of floating)
       - could contain opional C(+/-) at the begining
-      - could be followed by modifiers: C(Kb), C(Mb, C(Gb, C(Tb), C(K), C(M), C(G), C(T)
-      - multiplier is C(1000)
+      - could be followed by modifiers C(Kb), C(Mb), C(Gb), C(Tb), C(K), C(M), C(G), C(T)
+      - multiplier is 1000
     required: false
   inodes_soft:
     description:
       - number of inodes  to set hard quota (integer of floating)
       - could contain opional C(+/-) at the begining
-      - could be followed by modifiers: C(Kb), C(Mb, C(Gb, C(Tb), C(K), C(M), C(G), C(T)
-      - multiplier is C(1000)
+      - could be followed by modifiers C(Kb), C(Mb), C(Gb), C(Tb), C(K), C(M), C(G), C(T)
+      - multiplier is 1000
     required: false
 notes:
-  - at one time there could be managed only quota for one user/group on given filesystem.
+  - At one time there could be managed only quota for one user/group on given filesystem.
     To manage the quota on more fileststems the task need to be runned multiple times.
-  - for getting quota is C(quota) tool used
-  - for setting quota is  C(setquota) tool used
-  - the C(quotatool) binary have in version C(1.4.12) bug. This which makes it unusable
-    C(https://github.com/ekenberg/quotatool/issues/7). It is used for example in C(Debian 9)
+  - The C(quotatool) binary have in version 1.4.12 bug. This which makes it unusable
+    U(https://github.com/ekenberg/quotatool/issues/7). It is used for example in Debian 9
+requirements:
+  - quota binary installed
+  - setquota binary installed
 '''
 
 EXAMPLES = r'''
