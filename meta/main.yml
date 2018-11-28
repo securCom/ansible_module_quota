@@ -3,7 +3,7 @@ galaxy_info:
   description: module ti manage user and group filesystem quota
   company: securCom, s.r.o.
 
-  license: BSD
+  license: GPLv3
 
   min_ansible_version: 2.4
 

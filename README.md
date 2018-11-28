@@ -95,7 +95,7 @@ To get actual quota omit all **hard**/**soft** parameters.
 
 # License
 
-BSD
+GPLv3
 
 # Author Information
 
