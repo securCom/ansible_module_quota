@@ -99,6 +99,4 @@ GPLv3
 
 # Author Information
 
-- name: Peter Hudec
-- sponsor: ![securCom](https://www.securcom.me/wp-content/themes/securcom/images/logo.png)
-
+- Peter Hudec (@hudecof)
