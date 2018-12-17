@@ -64,13 +64,22 @@ Detailed description is in the modules file, just brief
   
 # Example Playbook
 
+## import
+
+At thos moment thismodule is no tin **galaxy.ansible.com**, so import need to be a littbe bit tweaked.
+Put this into `requirements.yml`
+
+    - src: https://github.com/securCom/ansible_module_quota
+      name: securcom.module_quota
+
+
 ## get actual quota
 
 To get actual quota omit all **hard**/**soft** parameters.
 
     - hosts: servers
       roles:
-         - { role: hudecof.module_quota }
+         - { role: securcom.module_quota }
       tasks:
         - name: get quota
           quota:
@@ -83,7 +92,7 @@ To get actual quota omit all **hard**/**soft** parameters.
 
     - hosts: servers
       roles:
-         - { role: hudecof.module_quota }
+         - { role: securcom.module_quota }
       tasks:
         - name: get quota
           quota:
