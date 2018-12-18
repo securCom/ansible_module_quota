@@ -109,9 +109,8 @@ blocks_soft:
   description: current value for blocks soft limit
   type: int
 blocks_grace:
-  description: current value for blocks grace period
-  type: str
-  sample: '6days'
+  description: current value for blocks grace period  in seconds since epoch
+  type: int
   returned: when quota report is used
 blocks_current:
   description: current usage of blocks
@@ -126,9 +125,8 @@ inodes_soft:
   description: current value for inodes soft limit
   type: int
 inodes_grace:
-  description: current value for inodes grace period
-  type: str
-  sample: '6days'
+  description: current value for inodes grace period in seconds since epoch
+  type: int
   returned: when quota report is used
 inodes_current:
   description: current usage of inodes
@@ -204,6 +202,7 @@ def get_quota_quota(module):
 
     cmd = [module.get_bin_path('quota', True)]
     cmd.append('-l')
+    cmd.append('-p')
     if module.params['type'] == 'user':
         cmd.append('-u')
     else:
@@ -220,11 +219,11 @@ def get_quota_quota(module):
         'blocks_soft': '0',
         'blocks_hard': '0',
         'blocks_current': '0',
-        'blocks_grace': '',
+        'blocks_grace': '0',
         'inodes_soft': '0',
         'inodes_hard': '0',
         'inodes_current': '0',
-        'inodes_grace': '',
+        'inodes_grace': '0',
     }
 
     for line in out.split('\n'):
@@ -314,11 +313,11 @@ def get_quota_quotatool(module):
         'blocks_soft': '0',
         'blocks_hard': '0',
         'blocks_current': '0',
-        'blocks_grace': '',
+        'blocks_grace': '0',
         'inodes_soft': '0',
         'inodes_hard': '0',
         'inodes_current': '0',
-        'inodes_grace': '',
+        'inodes_grace': '0',
     }
 
     for line in out.split('\n'):
